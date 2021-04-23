@@ -34,9 +34,9 @@ export enum Page {
     CreateProgram = "CreateProgram",
 
     /**
-     * The stormtech lab to overclock stats.
+     * The Stanek's Gift to overclock stats.
      */
-    StormTechLab = "StormTechLab",
+    StaneksGift = "StaneksGift",
 
     /**
      * The list of all factions, and invites, available to the player.
