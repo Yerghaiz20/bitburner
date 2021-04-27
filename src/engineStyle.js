@@ -31,3 +31,4 @@ import "../css/grid.min.css";
 import "../css/dev-menu.css";
 import "../css/casino.scss";
 import "../css/stormtechlab.scss";
+import "../css/staneksgift.scss";

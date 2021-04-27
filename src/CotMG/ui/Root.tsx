@@ -15,8 +15,8 @@ export class Root extends React.Component<IProps, any> {
     }
 
     render() {
-        return (<><h1>Stanek's Gift</h1>
+        return (<div className="staneksgift_container"><h1>Stanek's Gift</h1>
             <Grid gift={this.staneksGift} />
-        </>)
+        </div>)
     }
 }
