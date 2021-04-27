@@ -2,32 +2,18 @@ import * as React from "react";
 import { Fragment, Fragments } from "../Fragment";
 import { ActiveFragment } from "../ActiveFragment";
 import { IStaneksGift } from "../IStaneksGift";
+import { StdButton } from "../../ui/React/StdButton";
+import { Cell } from "./Cell";
+import { FragmentInspector } from "./FragmentInspector";
+import { FragmentSelector } from "./FragmentSelector";
 
-type CellProps = {
-    onMouseEnter: () => void;
-    onClick: () => void;
-    color: string;
-}
-
-function Cell(cellProps: CellProps) {
-    return (
-        <div
-            className="stormtechlab_cell"
-            style={{backgroundColor: cellProps.color}}
-            onMouseEnter={cellProps.onMouseEnter}
-            onClick={cellProps.onClick}
-        />
-    )
-}
-
-const selectedFragment: Fragment = Fragments[0];
+let selectedFragment: Fragment = Fragments[0];
 
 type GridProps = {
     gift: IStaneksGift;
 }
 
 export function Grid(props: GridProps) {
-    const width = 10, height = 15;
     function zeros(dimensions: number[]): any {
         const array = [];
 
@@ -38,11 +24,12 @@ export function Grid(props: GridProps) {
         return array;
     }
 
-    const [grid, setGrid] = React.useState(zeros([width, height]));
-    const [ghostGrid, setGhostGrid] = React.useState(zeros([width, height]));
+    const [grid, setGrid] = React.useState(zeros([props.gift.width, props.gift.height]));
+    const [ghostGrid, setGhostGrid] = React.useState(zeros([props.gift.width, props.gift.height]));
+    const [pos, setPos] = React.useState([0, 0]);
 
     function moveGhost(x: number, y: number) {
-        const newgrid = zeros([width, height]);
+        const newgrid = zeros([props.gift.width, props.gift.height]);
         for(let i = 0; i < selectedFragment.shape.length; i++) {
             for(let j = 0; j < selectedFragment.shape[i].length; j++) {
                 if(x+i > newgrid.length-1) continue;
@@ -53,20 +40,23 @@ export function Grid(props: GridProps) {
         }
 
         setGhostGrid(newgrid);
+        setPos([x, y]);
     }
 
     function click(x: number, y: number) {
         if(!props.gift.canPlace(x, y, selectedFragment)) return;
         props.gift.place(x, y, selectedFragment);
-        const newgrid = zeros([width, height]);
-        for(let i = 0; i < width; i++) {
-            for(let j = 0; j < height; j++) {
+        const newgrid = zeros([props.gift.width, props.gift.height]);
+        for(let i = 0; i < props.gift.width; i++) {
+            for(let j = 0; j < props.gift.height; j++) {
                 const fragment = props.gift.fragmentAt(i, j);
                 if(fragment === null) continue;
                 newgrid[i][j] = 1;
             }
         }
         setGrid(newgrid);
+
+        selectedFragment = Fragments[Math.floor(Fragments.length*Math.random())];
     }
 
     function randomColor(fragment: ActiveFragment): string {
@@ -97,11 +87,16 @@ export function Grid(props: GridProps) {
         return "";
     }
 
+    function clear() {
+        props.gift.clear();
+        setGrid(zeros([props.gift.width, props.gift.height]));
+    }
+
     // switch the width/length to make axis consistent.
     const elems = [];
-    for(let j = 0; j < height; j++) {
+    for(let j = 0; j < props.gift.height; j++) {
         const cells = [];
-        for(let i = 0; i < width; i++) {
+        for(let i = 0; i < props.gift.width; i++) {
             cells.push(<Cell
                 key={i}
                 onMouseEnter={() => moveGhost(i, j)}
@@ -109,12 +104,19 @@ export function Grid(props: GridProps) {
                 color={color(i, j)}
             />);
         }
-        elems.push(<div key={j} className="stormtechlab_row">
+        elems.push(<div key={j} className="staneksgift_row">
             {...cells}
         </div>)
     }
 
-    return (<>
-        {...elems}
-    </>)
+    return (<div>
+        <StdButton onClick={clear} text="Clear" />
+        <div style={{float: 'left'}}>
+            {...elems}
+        </div>
+        <div>
+            <FragmentInspector fragment={props.gift.fragmentAt(pos[0], pos[1])}/>
+            <FragmentSelector selectFragment={function(){}}/>
+        </div>
+    </div>)
 }

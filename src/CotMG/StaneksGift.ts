@@ -2,9 +2,13 @@ import { Fragment, FragmentById } from "./Fragment";
 import { ActiveFragment } from "./ActiveFragment";
 
 export class StaneksGift {
+    width: number = 8;
+    height: number = 10;
     fragments: ActiveFragment[] = [];
 
     canPlace(x: number, y: number, fragment: Fragment): boolean {
+        if(x + fragment.width() > this.width) return false;
+        if(y + fragment.height() > this.height) return false;
         const newFrag = new ActiveFragment(x, y, fragment);
         for(const aFrag of this.fragments) {
             if(aFrag.collide(newFrag)) return false;
@@ -26,5 +30,9 @@ export class StaneksGift {
         }
 
         return null;
+    }
+
+    clear(): void {
+        this.fragments = [];
     }
 }

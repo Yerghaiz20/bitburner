@@ -29,4 +29,4 @@ import "../css/resleeving.scss";
 import "../css/treant.css";
 import "../css/grid.min.css";
 import "../css/dev-menu.css";
-import "../css/stormtechlab.scss";
+import "../css/staneksgift.scss";
